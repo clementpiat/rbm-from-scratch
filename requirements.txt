@@ -1,10 +1,10 @@
-datasets
-pillow
 numpy
-scipy
 tqdm
+datasets  # for MNIST download
+# visualization
+pillow
 matplotlib
-scikit-learn
+scikit-learn  # for TSNE
 # clean code
 ruff
 ty

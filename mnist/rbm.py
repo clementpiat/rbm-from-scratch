@@ -1,8 +1,7 @@
 import numpy as np
 from tqdm import tqdm
-from scipy.special import expit as sigmoid
 
-from utils import get_batches
+from utils import get_batches, sigmoid
 
 
 class BinaryRestrictedBoltzmannMachine:

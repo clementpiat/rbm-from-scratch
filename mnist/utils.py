@@ -24,3 +24,7 @@ def get_batches(samples: np.ndarray, labels: np.ndarray) -> np.ndarray:
         batches.append([label_to_images[label][i] for label in label_to_images])
 
     return np.array(batches)
+
+
+def sigmoid(x: np.ndarray) -> np.ndarray:
+    return 1 / (1 + np.exp(-x))

@@ -68,7 +68,7 @@ if __name__ == "__main__":
     samples = np.array([to_binary_flat(x["image"]) for x in ds["train"]])
     labels = np.array([x["label"] for x in ds["train"]])
 
-    rbm = BinaryRestrictedBoltzmannMachine(samples, labels, epochs=50)
+    rbm = BinaryRestrictedBoltzmannMachine(samples, labels, epochs=200)
     rbm.train()
-    visualizer = Visualizer(rbm, "M400_e50.png")
+    visualizer = Visualizer(rbm, "M400_e200.png")
     visualizer.plot()
