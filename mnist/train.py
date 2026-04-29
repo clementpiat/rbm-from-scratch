@@ -19,7 +19,7 @@ class Visualizer:
         ncol = 4
         gs_recon = self.gs[1:5, :].subgridspec(ncol, ncol)
 
-        v = self.rbm.get_long_chain_visible_inputs()
+        v = self.rbm.sample_long_chain_v()
         for k, flat_image in enumerate(v[: (ncol**2)]):
             im = to_image(flat_image)
             ax = self.fig.add_subplot(gs_recon[k])
@@ -32,7 +32,7 @@ class Visualizer:
         ax.set_title("Free energy")
 
         ax = self.fig.add_subplot(self.gs[0, 1])
-        ax.plot(self.rbm.evaluatation_metrics["reconstruction_loss"])
+        ax.plot(self.rbm.evaluatation_metrics["reconstruction_error"])
         ax.set_title("Reconstruction error")
 
         ax = self.fig.add_subplot(self.gs[0, 2])

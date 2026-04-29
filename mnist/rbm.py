@@ -46,7 +46,7 @@ class BinaryRestrictedBoltzmannMachine:
         self.evaluatation_metrics = {
             "free_energy_train": [],
             "free_energy_val": [],
-            "reconstruction_loss": [],
+            "reconstruction_error": [],
             "weight_abs": [],
         }
         self.trained = False
@@ -102,14 +102,17 @@ class BinaryRestrictedBoltzmannMachine:
         f = -np.dot(v, self.a) - self.T * np.sum(np.logaddexp(0, x), axis=1)  # B
         return np.mean(f)
 
-    def reconstruction_loss(self, v: np.ndarray) -> np.floating:
+    def reconstruction_error(self, v: np.ndarray) -> np.floating:
         h = self.sample_h(v)
         v2 = self.sample_v(h)
         return np.linalg.norm(v - v2)  # L2 norm
 
-    def get_long_chain_visible_inputs(
-        self, chain_length: int = 20, n_images: int = 16
+    def sample_long_chain_v(
+        self, chain_length: int = 50, n_images: int = 16
     ) -> np.ndarray:
+        """
+        Start from a random configuration, and iteratively apply Gibbs sampling.
+        """
         v = np.random.randint(0, 2, size=[n_images, self.N])
         for _ in range(chain_length):
             h = self.sample_h(v)
@@ -120,9 +123,9 @@ class BinaryRestrictedBoltzmannMachine:
     def evaluate(self) -> None:
         free_energy_train = self.free_energy(self.training_batches[0])
         free_energy_val = self.free_energy(self.validation_batches[0])
-        reconstruction_loss = self.reconstruction_loss(self.training_batches[0])
+        reconstruction_error = self.reconstruction_error(self.training_batches[0])
 
         self.evaluatation_metrics["free_energy_train"].append(free_energy_train)
         self.evaluatation_metrics["free_energy_val"].append(free_energy_val)
-        self.evaluatation_metrics["reconstruction_loss"].append(reconstruction_loss)
+        self.evaluatation_metrics["reconstruction_error"].append(reconstruction_error)
         self.evaluatation_metrics["weight_abs"].append(np.abs(self.W).mean())
