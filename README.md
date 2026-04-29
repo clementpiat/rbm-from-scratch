@@ -13,7 +13,7 @@
 
 # MNIST
 
-I implement a basic Restricted Boltzmann Machine training script for MNIST. 
+I implemented a basic RBM training script for MNIST. 
 
 ```shell
 pip install -r requirements.txt
