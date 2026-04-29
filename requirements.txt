@@ -4,6 +4,7 @@ numpy
 scipy
 tqdm
 matplotlib
+scikit-learn
 # clean code
 uv
 ruff

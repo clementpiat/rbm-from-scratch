@@ -1,9 +1,8 @@
 import numpy as np
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 from scipy.special import expit as sigmoid
 
-from utils import to_image, to_binary_flat, get_batches
+from utils import get_batches
 
 
 class BinaryRestrictedBoltzmannMachine:
@@ -52,6 +51,7 @@ class BinaryRestrictedBoltzmannMachine:
             "reconstruction_loss": [],
             "weight_abs": [],
         }
+        self.trained = False
 
     def probe_h(self, v: np.ndarray) -> np.ndarray:
         return sigmoid((self.b + v @ self.W) / self.T)
@@ -87,8 +87,9 @@ class BinaryRestrictedBoltzmannMachine:
         self.b = self.b + self.lr * db
 
     def train(self) -> None:
-        self.evaluate()
+        assert not self.trained, "Cannot train an RBM instance twice."
 
+        self.evaluate()
         for e in tqdm(range(1, self.epochs + 1), desc="Training"):
             for batch in self.training_batches:
                 self.train_batch(batch)
@@ -96,7 +97,8 @@ class BinaryRestrictedBoltzmannMachine:
             if e % self.evaluate_every_k_epochs == 0:
                 self.evaluate()
 
-    # Evaluation
+        self.trained = True
+
     def free_energy(self, v: np.ndarray) -> np.floating:
         x = (self.b + v @ self.W) / self.T  # B, M
         f = -np.dot(v, self.a) - self.T * np.sum(np.logaddexp(0, x), axis=1)  # B
@@ -126,41 +128,3 @@ class BinaryRestrictedBoltzmannMachine:
         self.evaluatation_metrics["free_energy_val"].append(free_energy_val)
         self.evaluatation_metrics["reconstruction_loss"].append(reconstruction_loss)
         self.evaluatation_metrics["weight_abs"].append(np.abs(self.W).mean())
-
-    def show_examples(self) -> None:
-        v = self.get_long_chain_visible_inputs()
-        ncols = 4
-        nrows = len(v) // 4 + 1
-        _, axs = plt.subplots(nrows, ncols)
-        for k, flat_image in enumerate(v):
-            i, j = k // ncols, k % ncols
-            im = to_image(flat_image)
-            axs[i][j].imshow(im)
-
-    def plot_training(self) -> None:
-        plt.figure(1)
-        plt.plot(self.evaluatation_metrics["free_energy_train"], label="train")
-        plt.plot(self.evaluatation_metrics["free_energy_val"], label="eval")
-        plt.legend()
-        plt.title("Free energy")
-        plt.figure(2)
-        plt.plot(self.evaluatation_metrics["reconstruction_loss"])
-        plt.title("Reconstruction loss")
-        plt.figure(3)
-        plt.plot(self.evaluatation_metrics["weight_abs"])
-        plt.title("Weights absolute value")
-        plt.figure(4)
-        self.show_examples()
-
-
-if __name__ == "__main__":
-    from datasets import load_dataset
-    import numpy as np
-
-    ds = load_dataset("mnist")
-    samples = np.array([to_binary_flat(x["image"]) for x in ds["train"]])
-    labels = np.array([x["label"] for x in ds["train"]])
-
-    rbm = BinaryRestrictedBoltzmannMachine(samples, labels)
-    rbm.train()
-    rbm.plot_training()
