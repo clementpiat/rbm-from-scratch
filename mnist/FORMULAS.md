@@ -62,13 +62,7 @@ There are two opposing forces here, minimizing the free energy of the training e
 
 If we compute the derivative of the free energy, we get
 
-$\begin{cases}
-\frac{\partial F}{\partial w_{i,j}} = - v_i h_j \\
-\frac{\partial F}{\partial a_{i}} = - v_i \\
-\frac{\partial F}{\partial b_{j}} = - h_j \\
-h_j=\sigma(x_j) \\
-x_j=\frac{b_j + \sum_{i} v_i W_{i,j}}{T}
-\end{cases}$
+$\begin{cases}\frac{\partial F}{\partial w_{i,j}} = - v_i h_j \\\frac{\partial F}{\partial a_{i}} = - v_i \\\frac{\partial F}{\partial b_{j}} = - h_j \\h_j=\sigma(x_j) \\x_j=\frac{b_j + \sum_{i} v_i W_{i,j}}{T}\end{cases}$
 
 which gives when putting into the loss:
 
