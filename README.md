@@ -10,3 +10,23 @@
 [![Ty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ty/main/assets/badge/v0.json)](https://github.com/astral-sh/ty)
 
 </div>
+
+# MNIST
+
+I implement a basic Restricted Boltzmann Machine training script for MNIST. 
+
+```shell
+pip install -r requirements.txt
+cd mnist
+python train.py
+```
+
+&rarr; Check the `mnist` folder for more details (theory, learning resources, training figures).
+
+# Genomics data
+
+WIP
+
+# Convolutional RBM
+
+WIP
