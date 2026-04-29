@@ -24,7 +24,6 @@ class BinaryRestrictedBoltzmannMachine:
         thresh = int(len(batches) * (1 - val_ratio))
         self.training_batches = batches[:thresh]
         self.validation_batches = batches[thresh:]
-
         self.N = training_samples.shape[1]  # input lengths
 
         # Hyperparams
@@ -33,7 +32,7 @@ class BinaryRestrictedBoltzmannMachine:
         self.T = temperature  # temperature
         self.epochs = epochs  # number of epochs
         self.wd = wd  # weight decay
-        self.lr = lr
+        self.lr = lr  # learning rate
 
         # Weights and biases
         np.random.seed(0)
@@ -42,7 +41,7 @@ class BinaryRestrictedBoltzmannMachine:
         self.a = np.log(p / (1 - p))
         self.b = np.zeros(self.M)
 
-        # Evaluation metrics
+        # Evaluation
         self.evaluate_every_k_epochs = evaluate_every_k_epochs
         self.evaluatation_metrics = {
             "free_energy_train": [],
@@ -69,7 +68,7 @@ class BinaryRestrictedBoltzmannMachine:
         h = self.probe_h(v)  # (B, M)
         hebbian_term = v.T @ h  # (N, M)
 
-        # Build the negative term with CD_n
+        # Build the negative term with Contrastive Divergence
         h2 = np.copy(h)
         for _ in range(self.n):
             v2 = self.probe_v(h2)
