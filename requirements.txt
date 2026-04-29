@@ -1,7 +1,9 @@
 datasets
 pillow
 numpy
+scipy
 tqdm
+matplotlib
 # clean code
 uv
 ruff

@@ -1,2 +1,5 @@
 setup.sh
 venv/*
+*.ipynb
+*.txt
+*__pycache__*
