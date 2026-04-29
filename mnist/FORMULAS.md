@@ -60,9 +60,13 @@ There are two opposing forces here, minimizing the free energy of the training e
 * $\log(Z)$ will be approximated with the Contrastive Divergence strategy
 * $-\log(\sum_{h}e^{-\frac{E(v,h)}{T}}) = \frac{F(v)}{T}$
 
-If we compute the derivative of the free energy, we get
+If we compute the derivatives of the free energy, we get
 
-$\begin{cases}\frac{\partial F}{\partial w_{i,j}} = - v_i h_j \\\frac{\partial F}{\partial a_{i}} = - v_i \\\frac{\partial F}{\partial b_{j}} = - h_j \\h_j=\sigma(x_j) \\x_j=\frac{b_j + \sum_{i} v_i W_{i,j}}{T}\end{cases}$
+* $\frac{\partial F}{\partial w_{i,j}} = - v_i h_j$
+* $\frac{\partial F}{\partial a_{i}} = - v_i$
+* $\frac{\partial F}{\partial b_{j}} = - h_j$
+* $h_j=\sigma(x_j)$
+* $x_j=\frac{b_j + \sum_{i} v_i W_{i,j}}{T}$
 
 which gives when putting into the loss:
 
