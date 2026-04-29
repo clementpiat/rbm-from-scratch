@@ -1,0 +1,8 @@
+datasets
+pillow
+numpy
+tqdm
+# clean code
+uv
+ruff
+ty
