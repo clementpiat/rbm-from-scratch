@@ -62,7 +62,6 @@ class Visualizer:
         ax.set_title("Hidden units activations")
 
     def _plot_tsne(self) -> None:
-        # WARN: extremely specific to MNIST
         ax = self.fig.add_subplot(self.gs[4:, :])
 
         samples = np.array([x for l in self.rbm.validation_batches for x in l])
