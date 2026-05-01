@@ -13,7 +13,7 @@
 
 # MNIST
 
-I implemented a basic RBM training script for MNIST. 
+I implemented a minimal RBM training script for MNIST. It is based on Numpy (not Pytorch), uses standard gradient descent, L2 regularization, and Contrastive Divergence.
 
 ```shell
 pip install -r requirements.txt

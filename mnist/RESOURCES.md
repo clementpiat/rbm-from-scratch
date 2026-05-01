@@ -3,3 +3,4 @@
 * Simona Cocco lecture on RBM: https://www.youtube.com/watch?v=BfoBQTF55Ro
 * Hopfield Network explaned: https://www.youtube.com/watch?v=1WPJdAW-sFo
 * RBM explaned: https://www.youtube.com/watch?v=_bqa_I5hNAo
+* 2025 Hinton Lecture: https://www.youtube.com/watch?v=juif0T8NOsY

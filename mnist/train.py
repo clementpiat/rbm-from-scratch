@@ -6,10 +6,6 @@ from rbm import BinaryRestrictedBoltzmannMachine
 
 
 class Visualizer:
-    """
-    Class to visualize a trained RBM.
-    """
-
     def __init__(self, rbm: BinaryRestrictedBoltzmannMachine, output_name: str) -> None:
         assert rbm.trained, "RBM needs to be trained."
         self.rbm = rbm
@@ -29,7 +25,11 @@ class Visualizer:
         ax = self.fig.add_subplot(self.gs[0, 0])
         ax.plot(self.rbm.evaluatation_metrics["free_energy_train"], label="train")
         ax.plot(self.rbm.evaluatation_metrics["free_energy_val"], label="eval")
-        ax.set_title("Free energy")
+        ax.legend()
+        free_energy_noise = int(
+            np.mean(self.rbm.evaluatation_metrics["free_energy_noise"])
+        )
+        ax.set_title(f"Free energy (noise = {free_energy_noise})")
 
         ax = self.fig.add_subplot(self.gs[0, 1])
         ax.plot(self.rbm.evaluatation_metrics["reconstruction_error"])
@@ -40,14 +40,18 @@ class Visualizer:
         ax.set_title("Weights absolute value")
 
     def _plot_tsne(self) -> None:
+        # WARN: extremely specific to MNIST
         ax = self.fig.add_subplot(self.gs[5:, :])
 
         samples = np.array([x for l in self.rbm.validation_batches for x in l])
-        labels = np.array([i % 10 for i, _ in enumerate(samples)])
 
         X = self.rbm.probe_h(samples)
         X_embedded = TSNE().fit_transform(X)
-        ax.scatter(X_embedded[:, 0], X_embedded[:, 1], c=labels, cmap="tab10", s=0.5)
+        for i in range(10):
+            X_i = np.array([x for j, x in enumerate(X_embedded) if j % 10 == i])
+            ax.scatter(X_i[:, 0], X_i[:, 1], label=i, cmap="tab10", s=2)
+
+        ax.legend()
 
     def plot(self) -> None:
         self.fig = plt.figure(constrained_layout=True, figsize=[10, 16])
@@ -68,7 +72,7 @@ if __name__ == "__main__":
     samples = np.array([to_binary_flat(x["image"]) for x in ds["train"]])
     labels = np.array([x["label"] for x in ds["train"]])
 
-    rbm = BinaryRestrictedBoltzmannMachine(samples, labels, epochs=200)
+    rbm = BinaryRestrictedBoltzmannMachine(samples, labels, epochs=30)
     rbm.train()
-    visualizer = Visualizer(rbm, "M400_e200.png")
+    visualizer = Visualizer(rbm, "M400.png")
     visualizer.plot()

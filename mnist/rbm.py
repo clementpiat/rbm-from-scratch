@@ -46,6 +46,7 @@ class BinaryRestrictedBoltzmannMachine:
         self.evaluatation_metrics = {
             "free_energy_train": [],
             "free_energy_val": [],
+            "free_energy_noise": [],
             "reconstruction_error": [],
             "weight_abs": [],
         }
@@ -64,11 +65,13 @@ class BinaryRestrictedBoltzmannMachine:
         return np.random.rand(len(h), self.N) < self.probe_v(h)
 
     def train_batch(self, v: np.ndarray) -> None:
+        # Wake phase
         # "Neurones that fire together, wire together", Hebb.
         h = self.probe_h(v)  # (B, M)
         hebbian_term = v.T @ h  # (N, M)
 
-        # Build the negative term with Contrastive Divergence
+        # Sleep / Dream / Unlearning phase
+        # Thermal equilibrium is approximated via Contrastive Divergence
         h2 = np.copy(h)
         for _ in range(self.n):
             v2 = self.probe_v(h2)
@@ -108,24 +111,27 @@ class BinaryRestrictedBoltzmannMachine:
         return np.linalg.norm(v - v2)  # L2 norm
 
     def sample_long_chain_v(
-        self, chain_length: int = 50, n_images: int = 16
+        self, chain_length: int = 100, n_images: int = 16
     ) -> np.ndarray:
         """
         Start from a random configuration, and iteratively apply Gibbs sampling.
         """
-        v = np.random.randint(0, 2, size=[n_images, self.N])
+        h = np.random.randint(0, 2, size=[n_images, self.M])
         for _ in range(chain_length):
+            v = self.probe_v(h)
             h = self.sample_h(v)
-            v = self.sample_v(h)
 
         return v
 
     def evaluate(self) -> None:
         free_energy_train = self.free_energy(self.training_batches[0])
         free_energy_val = self.free_energy(self.validation_batches[0])
+        noise = np.random.randint(0, 2, size=[len(self.training_batches[0]), self.N])
+        free_energy_noise = self.free_energy(noise)
         reconstruction_error = self.reconstruction_error(self.training_batches[0])
 
         self.evaluatation_metrics["free_energy_train"].append(free_energy_train)
         self.evaluatation_metrics["free_energy_val"].append(free_energy_val)
+        self.evaluatation_metrics["free_energy_noise"].append(free_energy_noise)
         self.evaluatation_metrics["reconstruction_error"].append(reconstruction_error)
         self.evaluatation_metrics["weight_abs"].append(np.abs(self.W).mean())

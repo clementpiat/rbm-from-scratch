@@ -11,9 +11,9 @@ Weights define the **energy landscape**.
 * Inference is adjusting x to minimize the energy by descending along the surface (can be done by an iterative process).
 
 
-# Restricted Boltzmann Machines
+# (Restricted) Boltzmann Machines
 
-For RBM, we add hidden neurons, and the energy becomes: 
+For RBM, we add hidden neurons, a bipartite constraint, and the energy becomes: 
 
 $$E(v,h)=-a^Tv-b^Th-v^TWh$$
 
@@ -23,14 +23,14 @@ We also add stochasticity in RBM. Neurons can be seen as particules with a proba
 
 $$p(v,h)=\frac{1}{Z}e^{-\frac{E(v,h)}{T}}$$
 
-&rarr; small temperature T correspond to a deterministic system like Hopfield Networks
+&rarr; if T=0 we go back to a deterministic system like Hopfield Networks
 
 &rarr; everything is here: **the network is completely defined by the weights (W), the biases (a and b), and the temperature (T), and every equation that follows stems from the two above equations.**
 
 
 ## Free energy
 
-If we define free energy as
+We define the free energy of an input $F(v)$ such that
 
 $p(v)=\frac{1}{Z}e^{-\frac{F(v)}{T}}$
 
@@ -42,7 +42,7 @@ which gives after applying log
 
 $F(v) = -T \log(\sum_he^{-\frac{E(v,h)}{T}})$
 
-and if we do the maths knowing that h is a binary vector, we get the following free energy formula:
+and if we do the maths, knowing that h is a binary vector, we get the following free energy formula:
 
 $$F(v) = -a^\top v - T \sum_j \log\left(1 + e^\frac{b_j + W_j^\top v}{T}\right)$$
 
@@ -55,9 +55,9 @@ We want to maximize the likelihood of the training examples, that is, for a give
 
 $L(v)=-\log(p(v))=-\log(\frac{1}{Z}\sum_{h}e^{-\frac{E(v,h)}{T}})=\log(Z)-\log(\sum_{h}e^{-\frac{E(v,h)}{T}})$
 
-There are two opposing forces here, minimizing the free energy of the training example, while maximizing the partition function Z (which could be seen as the total energy of the system).
+There are two opposing forces here, minimizing the free energy of the training example, while maximizing the partition function Z.
 
-* $\log(Z)$ will be approximated with the Contrastive Divergence strategy
+* $\log(Z)$ will be approximated with the Contrastive Divergence algorithm; this corresponds to the "unlearning" mechanism of Francis Crick
 * $-\log(\sum_{h}e^{-\frac{E(v,h)}{T}}) = \frac{F(v)}{T}$
 
 If we compute the derivatives of the free energy, we get
@@ -68,7 +68,7 @@ If we compute the derivatives of the free energy, we get
 * $h_j=\sigma(x_j)$
 * $x_j=\frac{b_j + \sum_{i} v_i W_{i,j}}{T}$
 
-which gives when putting into the loss:
+which gives when putting back into the loss:
 
 $\frac{\partial L}{\partial w_{i,j}} = \frac{\partial \log(Z)}{\partial w_{i,j}} - \frac{v_i h_j}{T}$
 
