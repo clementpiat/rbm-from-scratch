@@ -90,7 +90,7 @@ These results are not straightforward, but they rely on the mutual independance 
 
 The free energy becomes (at $T=1$):
 
-$${F(v) = -a^\top v - \sum_j \frac{1}{2}\max(0,\, b_j + W_j^\top v)^2}$$
+$${F(v) = -a^\top v - \sum_j \frac{1}{2}\max(0, b_j + W_j^\top v)^2}$$
 
 
 The derivatives become:
