@@ -13,7 +13,8 @@
 
 # MNIST
 
-I implemented a minimal RBM training script for MNIST. It is based on Numpy (not Pytorch), uses standard gradient descent, L2 regularization, and Contrastive Divergence.
+I implemented a minimal RBM training script for MNIST.
+It is based on numpy (no PyTorch), uses Contrastive Divergence for computing the gradients, and AdamW optimizer for updating the weights.
 
 ```shell
 pip install -r requirements.txt
@@ -24,9 +25,5 @@ python train.py
 &rarr; Check the `mnist` folder for more details (theory, learning resources, training figures).
 
 # Genomics data
-
-WIP
-
-# Convolutional RBM
 
 WIP

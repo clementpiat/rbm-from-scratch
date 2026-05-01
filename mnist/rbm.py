@@ -1,7 +1,9 @@
 import numpy as np
 from tqdm import tqdm
+from typing import Literal
 
-from utils import get_batches, sigmoid
+from adamw import AdamWOptimizer
+from utils import get_batches, relu, sigmoid
 
 
 class BinaryRestrictedBoltzmannMachine:
@@ -13,10 +15,12 @@ class BinaryRestrictedBoltzmannMachine:
         evaluate_every_k_epochs: int = 1,
         epochs: int = 30,
         hidden_units: int = 400,
-        cdn_steps: int = 3,
+        cdn_steps: int = 1,
         temperature: float = 1.0,
-        wd: float = 1e-4,
-        lr: float = 1e-4,
+        wd: float = 0.01,
+        lr: float = 5e-4,
+        optimizer: Literal["sgd", "adamw"] = "sgd",
+        activation: Literal["sigmoid", "relu"] = "sigmoid",
     ) -> None:
         # Training data
         batches = get_batches(training_samples, training_labels)
@@ -36,10 +40,20 @@ class BinaryRestrictedBoltzmannMachine:
 
         # Weights and biases
         np.random.seed(0)
-        self.W = np.random.normal(loc=0, scale=0.01, size=(self.N, self.M))
+        self.w = np.random.normal(loc=0, scale=0.01, size=(self.N, self.M))
         p = np.clip(np.mean(training_samples, axis=0), 1e-4, 1 - 1e-4)
         self.a = np.log(p / (1 - p))
         self.b = np.zeros(self.M)
+
+        # Optimizers
+        self.optimizer = optimizer
+        if self.optimizer == "adamw":
+            self.w_optim = AdamWOptimizer(self.w, lr=self.lr, wd=self.wd)
+            self.a_optim = AdamWOptimizer(self.a, lr=self.lr, wd=self.wd)
+            self.b_optim = AdamWOptimizer(self.b, lr=self.lr, wd=self.wd)
+
+        # Activation
+        self.activation = activation
 
         # Evaluation
         self.evaluate_every_k_epochs = evaluate_every_k_epochs
@@ -53,16 +67,25 @@ class BinaryRestrictedBoltzmannMachine:
         self.trained = False
 
     def probe_h(self, v: np.ndarray) -> np.ndarray:
-        return sigmoid((self.b + v @ self.W) / self.T)
+        x = (self.b + v @ self.w) / self.T
+        if self.activation == "relu":
+            return relu(x)
+
+        return sigmoid(x)
 
     def probe_v(self, h: np.ndarray) -> np.ndarray:
-        return sigmoid((self.a + h @ self.W.T) / self.T)
+        return sigmoid((self.a + h @ self.w.T) / self.T)
 
     def sample_h(self, v: np.ndarray) -> np.ndarray:
-        return np.random.rand(len(v), self.M) < self.probe_h(v)
+        if self.activation == "relu":
+            x = (self.b + v @ self.w) / self.T
+            x += np.random.normal(scale=sigmoid(x))
+            return relu(x)
+
+        return (np.random.rand(len(v), self.M) < self.probe_h(v)).astype(np.uint)
 
     def sample_v(self, h: np.ndarray) -> np.ndarray:
-        return np.random.rand(len(h), self.N) < self.probe_v(h)
+        return (np.random.rand(len(h), self.N) < self.probe_v(h)).astype(np.uint)
 
     def train_batch(self, v: np.ndarray) -> None:
         # Wake phase
@@ -77,15 +100,21 @@ class BinaryRestrictedBoltzmannMachine:
             v2 = self.probe_v(h2)
             h2 = self.sample_h(v2)
 
-        negative_term = v2.T @ h2
-        dw = (hebbian_term - negative_term) / self.T
-        self.W = self.W + self.lr * dw - self.wd * self.W
+        h2 = self.probe_h(v2)  # use prob for the gradient
+        unlearning_term = v2.T @ h2
+        dw = (unlearning_term - hebbian_term) / self.T
+        da = np.sum(v2 - v, axis=0)
+        db = np.sum(h2 - h, axis=0)
 
-        da = np.mean(v - v2, axis=0)
-        self.a = self.a + self.lr * da
-
-        db = np.mean(h - h2, axis=0)
-        self.b = self.b + self.lr * db
+        # Optimization step
+        if self.optimizer == "sgd":
+            self.w -= self.lr * (dw + 2 * self.wd * self.w)
+            self.a -= self.lr * da
+            self.b -= self.lr * db
+        else:
+            self.w_optim.update(dw)
+            self.a_optim.update(da)
+            self.b_optim.update(db)
 
     def train(self) -> None:
         assert not self.trained, "Cannot train an RBM instance twice."
@@ -101,27 +130,17 @@ class BinaryRestrictedBoltzmannMachine:
         self.trained = True
 
     def free_energy(self, v: np.ndarray) -> np.floating:
-        x = (self.b + v @ self.W) / self.T  # B, M
-        f = -np.dot(v, self.a) - self.T * np.sum(np.logaddexp(0, x), axis=1)  # B
+        x = (self.b + v @ self.w) / self.T  # B, M
+        if self.activation == "relu":
+            f = -np.dot(v, self.a) - self.T / 2 * np.sum(np.square(relu(x)), axis=1)
+        else:
+            f = -np.dot(v, self.a) - self.T * np.sum(np.logaddexp(0, x), axis=1)
         return np.mean(f)
 
     def reconstruction_error(self, v: np.ndarray) -> np.floating:
         h = self.sample_h(v)
         v2 = self.sample_v(h)
-        return np.linalg.norm(v - v2)  # L2 norm
-
-    def sample_long_chain_v(
-        self, chain_length: int = 100, n_images: int = 16
-    ) -> np.ndarray:
-        """
-        Start from a random configuration, and iteratively apply Gibbs sampling.
-        """
-        h = np.random.randint(0, 2, size=[n_images, self.M])
-        for _ in range(chain_length):
-            v = self.probe_v(h)
-            h = self.sample_h(v)
-
-        return v
+        return np.linalg.norm(v - v2) / v.size  # L2 norm by default
 
     def evaluate(self) -> None:
         free_energy_train = self.free_energy(self.training_batches[0])
@@ -134,4 +153,4 @@ class BinaryRestrictedBoltzmannMachine:
         self.evaluatation_metrics["free_energy_val"].append(free_energy_val)
         self.evaluatation_metrics["free_energy_noise"].append(free_energy_noise)
         self.evaluatation_metrics["reconstruction_error"].append(reconstruction_error)
-        self.evaluatation_metrics["weight_abs"].append(np.abs(self.W).mean())
+        self.evaluatation_metrics["weight_abs"].append(np.abs(self.w).mean())

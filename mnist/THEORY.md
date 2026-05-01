@@ -85,3 +85,20 @@ And conversely:
 $p(v_i=1|h)=\sigma(\frac{a_i + \sum_{j} h_j W_{i,j}}{T})$
 
 These results are not straightforward, but they rely on the mutual independance of the $h_j$ given $v$. 
+
+## ReLU Hidden units
+
+The free energy becomes (at $T=1$):
+
+$${F(v) = -a^\top v - \sum_j \frac{1}{2}\max(0,\, b_j + W_j^\top v)^2}$$
+
+
+The derivatives become:
+
+* $\frac{\partial F}{\partial w_{i,j}} = - v_i \max(0, x_j)$
+* $\frac{\partial F}{\partial a_{i}} = - v_i$
+* $\frac{\partial F}{\partial b_{j}} = - \max(0, x_j)$
+
+And the sampling of h becomes:
+
+$$h_j | v \sim \max(0, \mathcal{N}(x_j, \sigma(x_j))$$

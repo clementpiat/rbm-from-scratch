@@ -28,3 +28,7 @@ def get_batches(samples: np.ndarray, labels: np.ndarray) -> np.ndarray:
 
 def sigmoid(x: np.ndarray) -> np.ndarray:
     return 1 / (1 + np.exp(-x))
+
+
+def relu(x: np.ndarray) -> np.ndarray:
+    return x * (x > 0)
