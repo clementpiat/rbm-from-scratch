@@ -11,7 +11,6 @@ class Visualizer:
         self.rbm = rbm
         self.output_name = output_name
 
-
     def _plot_ts(self) -> None:
         ax = self.fig.add_subplot(self.gs[0, 0])
         ax.plot(self.rbm.evaluatation_metrics["free_energy_train"], label="train")

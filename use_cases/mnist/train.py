@@ -20,7 +20,7 @@ def to_image(arr: np.ndarray) -> Image.Image:
     return Image.fromarray(x)
 
 
-def get_batches(samples: np.ndarray, labels: np.ndarray) -> np.ndarray:
+def get_batches(samples: np.ndarray, labels: np.ndarray) -> list[np.ndarray]:
     label_to_images = defaultdict(lambda: [])
     for image, label in zip(samples, labels):
         label_to_images[label].append(image)
@@ -30,7 +30,7 @@ def get_batches(samples: np.ndarray, labels: np.ndarray) -> np.ndarray:
     for i in range(min_count):
         batches.append([label_to_images[label][i] for label in label_to_images])
 
-    return np.array(batches)
+    return batches
 
 
 class MNISTVisualizer(Visualizer):
@@ -82,7 +82,7 @@ class MNISTVisualizer(Visualizer):
         self._plot_tsne()
 
         plt.savefig(
-            pathlib(__file__).parent.resolve() / "figures" / self.output_name
+            pathlib.Path(__file__).parent.resolve() / "figures" / self.output_name
         )
 
 

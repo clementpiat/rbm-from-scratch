@@ -13,7 +13,6 @@ def relu(x: np.ndarray) -> np.ndarray:
     return x * (x > 0)
 
 
-
 class RestrictedBoltzmannMachine:
     def __init__(
         self,

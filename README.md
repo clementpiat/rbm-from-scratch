@@ -13,8 +13,8 @@
 # RBM
 
 * Implementation of a simple RBM.
-* Based on NumPy (no PyTorch); uses Contrastive Divergence for computing the gradients, and AdamW optimizer for updating the weights.
-* Implemented both ReLU and Sigmoid for the potential function.
+* Based on NumPy (no PyTorch)
+* Implemented ReLU and Sigmoid for the potential function, and AdamW and SGD for the optimizer.
 * Check out the `rbm` folder for more details (theory, learning resources, concrete implementation).
 
 # MNIST
