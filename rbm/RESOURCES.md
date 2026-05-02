@@ -1,0 +1,6 @@
+* RBM wikipedia: https://en.wikipedia.org/wiki/Restricted_Boltzmann_machine
+* Geoffrey Hinton guide on RBM: https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf
+* Simona Cocco lecture on RBM: https://www.youtube.com/watch?v=BfoBQTF55Ro
+* Hopfield Network explained: https://www.youtube.com/watch?v=1WPJdAW-sFo
+* RBM explained: https://www.youtube.com/watch?v=_bqa_I5hNAo
+* 2025 Hinton Lecture: https://www.youtube.com/watch?v=juif0T8NOsY

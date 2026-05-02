@@ -10,19 +10,22 @@
 
 </div>
 
+# RBM
+
+* Implementation of a simple RBM.
+* Based on NumPy (no PyTorch); uses Contrastive Divergence for computing the gradients, and AdamW optimizer for updating the weights.
+* Implemented both ReLU and Sigmoid for the potential function.
+* Check out the `rbm` folder for more details (theory, learning resources, concrete implementation).
+
 # MNIST
 
-I implemented a minimal RBM training script for MNIST.
-It is based on NumPy (no PyTorch), uses Contrastive Divergence for computing the gradients, and AdamW optimizer for updating the weights.
+I implemented a training script for the MNIST dataset. Check out the `use_cases/mnist` folder to see the training figures.
 
 ```shell
 pip install -r requirements.txt
-cd mnist
-python train.py
+python -m use_cases.mnist.train
 ```
 
-&rarr; Check the `mnist` folder for more details (theory, learning resources, training figures).
+# Sars-CoV-2 Spike RBD
 
-# Genomics data
-
-WIP
+See `use_cases/sars_cov_2_spike_rbd`.
