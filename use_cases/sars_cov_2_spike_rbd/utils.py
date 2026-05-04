@@ -18,7 +18,7 @@ IAPGQTGKIADYNYKLPDDFTG----C--VIAWNSNNLD------------SKVGG-NY-
 ----------------GF---------------------QPT----------------NG
 VGYQP---------YRV-VVLSFELLHA--PATVCG------PK-KST
 """.replace("\n", "")
-BETA_FILE = "uniprotkb_Betacoronavirus_AND_gene_s_2026_05_03_aligned.fasta"
+BETA_FILE = "data/uniprotkb_Betacoronavirus_AND_gene_s_2026_05_03_aligned.fasta"
 
 
 def msa_str_to_vec(msa_str: str) -> list[int]:
@@ -64,7 +64,9 @@ def load_mutants_and_scores() -> tuple[np.ndarray, np.ndarray]:
         rbd_site += 1
         rbd_site_to_msa[rbd_site] = col
 
-    with open(pathlib.Path(__file__).parent.resolve() / "single_mut_effects.csv") as f:
+    with open(
+        pathlib.Path(__file__).parent.resolve() / "data/single_mut_effects.csv"
+    ) as f:
         lines = [x.split(",") for x in f][1:]
 
     mutants, binding_scores = [], []

@@ -12,20 +12,25 @@
 
 # RBM
 
-* Implementation of a simple RBM.
+* Implementation of a simple RBM
 * Based on NumPy (no PyTorch)
-* Implemented ReLU and Sigmoid for the potential function, and AdamW and SGD for the optimizer.
-* Check out the `rbm` folder for more details (theory, learning resources, concrete implementation).
+* Implemented ReLU and Sigmoid for the potential function, and AdamW and SGD for the optimizer
+* See the `rbm` folder for more details (theory, learning resources, concrete implementation)
 
-# MNIST
+# Use cases
+## MNIST
 
-I implemented a training script for the MNIST dataset. Check out the `use_cases/mnist` folder to see the training figures.
+Implemented a training script for the MNIST dataset. See the training figures in `use_cases/mnist`.
 
 ```shell
 pip install -r requirements.txt
 python -m use_cases.mnist.train
 ```
 
-# Sars-CoV-2 Spike RBD
+## Sars-CoV-2 Spike RBD
 
-See `use_cases/sars_cov_2_spike_rbd`.
+* Trained an RBM on a Multiple Sequence Alignment of the betacoronavirus receptor-binding domain downloaded from UniProt
+* Used the Deep Mutational Scanning results of SARS-CoV-2 RBD from Starr et al. to compare the ACE2 binding score of mutants with their RBM energy
+
+
+See `use_cases/sars_cov_2_spike_rbd` for more details.

@@ -18,7 +18,7 @@ RBM are neural networks defined by a joint probability inspired by statistical p
 $$p(v,h)=\frac{1}{Z}e^{-\frac{E(v,h)}{T}}$$
 $$E(v,h)=-a^Tv-b^Th-v^TWh$$
 
-This energy is basically saying, neurons that often fires gives low energy, and neurons that often fire together gives low energy.
+This energy is basically saying, neurons that often fire give low energy, and neurons that often fire together give low energy as well.
 
 &rarr; for continuous inputs, we simply replace $a^Tv$ with a Gaussian term $\sum_i \frac{(v_i - \mu_i)^2}{2\sigma_i^2}$
 
@@ -27,7 +27,7 @@ This energy is basically saying, neurons that often fires gives low energy, and 
 
 ## Free energy
 
-We define the free energy of an input $F(v)$ such that
+We define the free energy of an input as $F(v)$ such that
 
 $p(v)=\frac{1}{Z}e^{-\frac{F(v)}{T}}$
 
@@ -81,9 +81,9 @@ And conversely:
 
 $p(v_i=1|h)=\sigma(\frac{a_i + \sum_{j} h_j W_{i,j}}{T})$
 
-These results are not straightforward, but they rely on the mutual independance of the $h_j$ given $v$. 
+These results are not straightforward, but I won't detail the maths; they rely on the mutual independance of the $h_j$ given $v$. 
 
-## ReLU Hidden units
+## ReLU hidden units
 
 The free energy becomes (at $T=1$):
 
