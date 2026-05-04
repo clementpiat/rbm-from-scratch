@@ -3,3 +3,7 @@ venv/*
 *.ipynb
 *.txt
 *__pycache__*
+# fasta files
+*03.fasta
+*sarbecovirus*
+*glycoprotein*

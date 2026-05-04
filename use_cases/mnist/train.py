@@ -71,7 +71,7 @@ class MNISTVisualizer(Visualizer):
         ax.legend(markerscale=4.0)
         ax.set_title("TSNE on the hidden units activations on the validation set")
 
-    def plot(self) -> None:
+    def plot(self, output_name: str) -> None:
         self.fig = plt.figure(constrained_layout=True, figsize=[10, 16])
         self.gs = self.fig.add_gridspec(6, 2)
 
@@ -81,9 +81,7 @@ class MNISTVisualizer(Visualizer):
         self._plot_reconstruction()
         self._plot_tsne()
 
-        plt.savefig(
-            pathlib.Path(__file__).parent.resolve() / "figures" / self.output_name
-        )
+        plt.savefig(pathlib.Path(__file__).parent.resolve() / "figures" / output_name)
 
 
 if __name__ == "__main__":
@@ -99,5 +97,5 @@ if __name__ == "__main__":
         batches, epochs=10, hidden_units=400, optimizer="adamw"
     )
     rbm.train()
-    visualizer = MNISTVisualizer(rbm, "M400_adamw.png")
-    visualizer.plot()
+    visualizer = MNISTVisualizer(rbm)
+    visualizer.plot("M400_adamw.png")

@@ -6,10 +6,9 @@ from rbm.rbm import RestrictedBoltzmannMachine
 
 
 class Visualizer:
-    def __init__(self, rbm: RestrictedBoltzmannMachine, output_name: str) -> None:
+    def __init__(self, rbm: RestrictedBoltzmannMachine) -> None:
         assert rbm.trained, "RBM needs to be trained."
         self.rbm = rbm
-        self.output_name = output_name
 
     def _plot_ts(self) -> None:
         ax = self.fig.add_subplot(self.gs[0, 0])
@@ -37,11 +36,11 @@ class Visualizer:
         ax.imshow(h_image, aspect="auto")
         ax.set_title("Hidden units activations")
 
-    def plot(self) -> None:
+    def simple_plot(self, file_path: str) -> None:
         self.fig = plt.figure(constrained_layout=True, figsize=[10, 10])
         self.gs = self.fig.add_gridspec(2, 2)
 
         self._plot_ts()
         self._plot_hidden_units_activations()
 
-        plt.savefig(f"figures/{self.output_name}")
+        plt.savefig(file_path)

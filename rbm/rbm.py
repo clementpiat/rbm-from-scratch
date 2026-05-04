@@ -134,13 +134,15 @@ class RestrictedBoltzmannMachine:
 
         self.trained = True
 
-    def free_energy(self, v: np.ndarray) -> np.floating:
+    def free_energy(
+        self, v: np.ndarray, return_mean: bool = True
+    ) -> np.floating | np.ndarray:
         x = (self.b + v @ self.w) / self.T  # B, M
         if self.activation == "relu":
             f = -np.dot(v, self.a) - self.T / 2 * np.sum(np.square(relu(x)), axis=1)
         else:
             f = -np.dot(v, self.a) - self.T * np.sum(np.logaddexp(0, x), axis=1)
-        return np.mean(f)
+        return np.mean(f) if return_mean else f
 
     def reconstruction_error(self, v: np.ndarray) -> np.floating:
         h = self.sample_h(v)

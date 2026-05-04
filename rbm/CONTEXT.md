@@ -13,19 +13,16 @@ Weights define the **energy landscape**.
 
 # (Restricted) Boltzmann Machines
 
-For RBM, we add hidden neurons, a bipartite constraint, and the energy becomes: 
-
-$$E(v,h)=-a^Tv-b^Th-v^TWh$$
-
-
-
-We also add stochasticity in RBM. Neurons can be seen as particules with a probability to be in a given state / energy.
+RBM are neural networks defined by a joint probability inspired by statistical physics.
 
 $$p(v,h)=\frac{1}{Z}e^{-\frac{E(v,h)}{T}}$$
+$$E(v,h)=-a^Tv-b^Th-v^TWh$$
 
-&rarr; if T=0 we go back to a deterministic system like Hopfield Networks
+This energy is basically saying, neurons that often fires gives low energy, and neurons that often fire together gives low energy.
 
-&rarr; everything is here: **the network is completely defined by the weights (W), the biases (a and b), and the temperature (T), and every equation that follows stems from the two above equations.**
+&rarr; for continuous inputs, we simply replace $a^Tv$ with a Gaussian term $\sum_i \frac{(v_i - \mu_i)^2}{2\sigma_i^2}$
+
+&rarr; and everything is here: **the network is completely defined by the weights (W), the biases (a and b), and the temperature (T), and every equation that follows stems from the two above equations.**
 
 
 ## Free energy
@@ -55,9 +52,9 @@ We want to maximize the likelihood of the training examples, that is, for a give
 
 $L(v)=-\log(p(v))=-\log(\frac{1}{Z}\sum_{h}e^{-\frac{E(v,h)}{T}})=\log(Z)-\log(\sum_{h}e^{-\frac{E(v,h)}{T}})$
 
-There are two opposing forces here, minimizing the free energy of the training example, while maximizing the partition function Z.
+There are two opposing forces here, minimizing the free energy of the training example, while maximizing the energy within the partition function Z.
 
-* $\log(Z)$ will be approximated with the Contrastive Divergence algorithm; this corresponds to the "unlearning" mechanism of Francis Crick
+* $\log(Z)$ will be approximated with the Contrastive Divergence algorithm
 * $-\log(\sum_{h}e^{-\frac{E(v,h)}{T}}) = \frac{F(v)}{T}$
 
 If we compute the derivatives of the free energy, we get
